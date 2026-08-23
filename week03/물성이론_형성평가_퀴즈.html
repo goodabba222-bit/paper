@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>물성이론 형성평가 — 논문연구및특허</title>
+<style>
+  :root{
+    --ink:#16232E;
+    --sub:#5C6B7A;
+    --faint:#93A2AF;
+    --bg-a:#EAF6F6;
+    --bg-b:#F3FAFC;
+    --card:#FFFFFF;
+    --line:#E1EBED;
+    --teal:#0E9C98;
+    --teal-deep:#0B7C79;
+    --teal-tint:#E3F6F4;
+    --amber:#F2A339;
+    --amber-tint:#FCF1DE;
+    --coral:#F0614F;
+    --coral-tint:#FDEAE7;
+    --green:#28B573;
+    --green-tint:#E4F7ED;
+    --shadow: 0 10px 30px -12px rgba(16,60,60,0.18);
+    --radius: 20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    font-family:'Pretendard Variable','Pretendard',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','Segoe UI',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 700px at 12% -8%, #D8F3F1 0%, transparent 55%),
+      radial-gradient(900px 600px at 110% 10%, #DDF0FB 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg-b), var(--bg-a));
+    background-attachment:fixed;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding: clamp(16px,4vw,32px) clamp(14px,4vw,20px) 60px;
+  }
+
+  /* ---------- Header ---------- */
+  .app-header{
+    text-align:center;
+    padding: 10px 4px 22px;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.04em;
+    color:var(--teal-deep);
+    background:var(--teal-tint);
+    padding:5px 12px;
+    border-radius:999px;
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:clamp(22px,5.6vw,30px);
+    line-height:1.28;
+    margin:0 0 8px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  h1 .flow{
+    background:linear-gradient(92deg,var(--teal),#26C2B8 55%, #4FD1C5);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .sub{
+    color:var(--sub);
+    font-size:14.5px;
+    margin:0;
+    line-height:1.6;
+  }
+
+  /* ---------- droplet mark ---------- */
+  .droplet{
+    width:46px; height:46px; margin:0 auto 14px;
+    display:block;
+  }
+
+  /* ---------- viscosity progress tube ---------- */
+  .tube-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin: 18px 0 4px;
+  }
+  .tube{
+    position:relative;
+    flex:1;
+    height:16px;
+    background:#FFFFFF;
+    border:1.5px solid var(--line);
+    border-radius:999px;
+    overflow:hidden;
+    box-shadow: inset 0 2px 4px rgba(16,60,60,0.06);
+  }
+  .tube-fill{
+    position:absolute; inset:0;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--teal), #4FD1C5 60%, #7FE0D6);
+    background-size:200% 100%;
+    transition:width .5s cubic-bezier(.4,0,.2,1);
+  }
+  .tube-fill::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image: linear-gradient(120deg, rgba(255,255,255,.35) 0 8%, transparent 8% 16%, rgba(255,255,255,.35) 16% 24%, transparent 24% 32%, rgba(255,255,255,.35) 32% 40%, transparent 40% 48%, rgba(255,255,255,.35) 48% 56%, transparent 56% 64%, rgba(255,255,255,.35) 64% 72%, transparent 72% 80%, rgba(255,255,255,.35) 80% 88%, transparent 88% 96%);
+    animation: flow 2.4s linear infinite;
+  }
+  @keyframes flow{ from{transform:translateX(0);} to{transform:translateX(-24px);} }
+  .tube-label{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--sub);
+    white-space:nowrap;
+    min-width:52px;
+    text-align:right;
+  }
+
+  .score-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin: 10px 2px 0;
+  }
+  .score-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:linear-gradient(135deg, var(--amber-tint), #FFF7E9);
+    border:1px solid #F5DFAE;
+    color:#9A6A0D;
+    font-weight:800;
+    font-size:14px;
+    padding:6px 14px 6px 10px;
+    border-radius:999px;
+  }
+  .score-badge .pt-icon{ font-size:15px; }
+  .score-badge b{ font-size:16px; font-variant-numeric:tabular-nums; }
+  .streak{
+    font-size:12.5px;
+    color:var(--faint);
+    font-weight:600;
+  }
+
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    border:1px solid rgba(255,255,255,.6);
+    padding: clamp(18px,5vw,28px);
+    margin-top:18px;
+  }
+
+  /* Intro card */
+  .intro-card{ text-align:center; }
+  .intro-list{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:20px 0 24px;
+  }
+  .intro-stat{
+    background:var(--teal-tint);
+    border-radius:14px;
+    padding:12px 6px;
+  }
+  .intro-stat b{
+    display:block;
+    font-size:19px;
+    color:var(--teal-deep);
+    font-weight:800;
+  }
+  .intro-stat span{
+    font-size:11.5px;
+    color:var(--sub);
+    font-weight:600;
+  }
+  .btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:800;
+    font-size:15.5px;
+    border-radius:14px;
+    padding:14px 22px;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{
+    background:linear-gradient(135deg, var(--teal), var(--teal-deep));
+    color:#fff;
+    box-shadow:0 10px 22px -8px rgba(14,156,152,.55);
+    width:100%;
+  }
+  .btn-primary:hover{ box-shadow:0 12px 26px -8px rgba(14,156,152,.65); }
+  .btn-primary:disabled{
+    background:#CFD8DC; color:#8FA0A8; box-shadow:none; cursor:not-allowed;
+  }
+  .btn-ghost{
+    background:#fff;
+    color:var(--teal-deep);
+    border:1.5px solid var(--teal);
+  }
+
+  /* Question meta row */
+  .q-meta{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  .chip{
+    font-size:11.5px;
+    font-weight:800;
+    padding:4px 10px;
+    border-radius:999px;
+    letter-spacing:.01em;
+  }
+  .chip-session{ background:#EEF3F8; color:#4C5A68; }
+  .chip-type{ background:#F1EEFB; color:#6A4FCB; }
+  .chip-diff-하{ background:var(--green-tint); color:#1E8F5A; }
+  .chip-diff-중{ background:var(--amber-tint); color:#9A6A0D; }
+  .chip-diff-상{ background:var(--coral-tint); color:#C43D2C; }
+
+  .q-num{
+    font-size:12.5px;
+    color:var(--faint);
+    font-weight:700;
+    margin-left:auto;
+  }
+
+  .q-prompt{
+    font-size:clamp(16px,4.4vw,18.5px);
+    line-height:1.55;
+    font-weight:700;
+    margin: 6px 0 18px;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    text-align:left;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#FBFDFD;
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:13px 14px;
+    font-size:15px;
+    line-height:1.5;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .opt:hover:not(:disabled){ border-color:var(--teal); background:#F5FCFB; }
+  .opt:active:not(:disabled){ transform:scale(.995); }
+  .opt .num{
+    flex:0 0 auto;
+    width:26px; height:26px;
+    border-radius:50%;
+    background:#EEF3F3;
+    color:var(--sub);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:13px;
+  }
+  .opt:disabled{ cursor:default; }
+  .opt.correct{
+    background:var(--green-tint); border-color:var(--green); color:#186B44;
+  }
+  .opt.correct .num{ background:var(--green); color:#fff; }
+  .opt.wrong{
+    background:var(--coral-tint); border-color:var(--coral); color:#9E3626;
+  }
+  .opt.wrong .num{ background:var(--coral); color:#fff; }
+  .opt.dim{ opacity:.55; }
+
+  .fill-row{
+    display:flex;
+    gap:10px;
+    margin-top:4px;
+  }
+  .fill-input{
+    flex:1;
+    font-family:inherit;
+    font-size:16px;
+    padding:13px 14px;
+    border-radius:14px;
+    border:1.5px solid var(--line);
+    outline:none;
+    background:#FBFDFD;
+    transition:border-color .15s ease;
+  }
+  .fill-input:focus{ border-color:var(--teal); }
+  .fill-input:disabled{ background:#F3F5F5; color:var(--sub); }
+  .btn-check{
+    background:var(--teal);
+    color:#fff;
+    border:none;
+    border-radius:14px;
+    padding:0 20px;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .btn-check:disabled{ background:#CFD8DC; cursor:not-allowed; }
+
+  /* Feedback panel */
+  .feedback{
+    margin-top:16px;
+    border-radius:14px;
+    padding:14px 16px;
+    font-size:14.5px;
+    line-height:1.65;
+    display:none;
+    animation: rise .25s ease;
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background:var(--green-tint); border:1px solid #BFE9D2; }
+  .feedback.no{ background:var(--coral-tint); border:1px solid #F4C6BE; }
+  .fb-title{
+    display:flex; align-items:center; gap:7px;
+    font-weight:800; font-size:15px; margin-bottom:6px;
+  }
+  .fb-title.ok{ color:#186B44; }
+  .fb-title.no{ color:#9E3626; }
+  .fb-answer{
+    font-weight:700; margin-bottom:4px;
+  }
+  .fb-explain{ color:#3E4C57; }
+
+  .next-row{
+    margin-top:18px;
+  }
+
+  /* ---------- Result ---------- */
+  .result-hero{
+    text-align:center;
+    padding: 6px 4px 8px;
+  }
+  .ring-wrap{ position:relative; width:150px; height:150px; margin:6px auto 14px; }
+  .ring-score{
+    position:absolute; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .ring-score b{ font-size:30px; font-weight:800; line-height:1; }
+  .ring-score span{ font-size:12px; color:var(--sub); font-weight:700; margin-top:4px; }
+
+  .result-msg{
+    font-size:15.5px;
+    font-weight:700;
+    margin: 4px 0 2px;
+  }
+  .result-sub{ color:var(--sub); font-size:13.5px; margin:0 0 6px;}
+
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:18px 0 6px;
+  }
+  .stat-box{
+    background:#F6FAFA;
+    border-radius:14px;
+    padding:12px 6px;
+    text-align:center;
+  }
+  .stat-box b{ display:block; font-size:19px; font-weight:800; }
+  .stat-box span{ font-size:11px; color:var(--sub); font-weight:600; }
+
+  .review-list{ margin-top:22px; }
+  .review-title{
+    font-size:13.5px; font-weight:800; color:var(--sub);
+    margin-bottom:10px; letter-spacing:.02em;
+  }
+  .review-item{
+    display:flex; align-items:flex-start; gap:10px;
+    padding:11px 4px;
+    border-bottom:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .review-item:last-child{ border-bottom:none; }
+  .review-mark{
+    flex:0 0 auto; width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; font-weight:800; color:#fff; margin-top:1px;
+  }
+  .review-mark.ok{ background:var(--green); }
+  .review-mark.no{ background:var(--coral); }
+  .review-text b{ font-weight:700; }
+  .review-text{ color:var(--sub); line-height:1.5; }
+  .review-text .q-line{ color:var(--ink); font-weight:600; }
+
+  .result-actions{
+    display:flex; flex-direction:column; gap:10px;
+    margin-top:22px;
+  }
+
+  .footer-note{
+    text-align:center;
+    color:var(--faint);
+    font-size:12px;
+    margin-top:26px;
+    line-height:1.7;
+  }
+
+  .hidden{ display:none !important; }
+
+  @media (max-width:380px){
+    .intro-list{ grid-template-columns:repeat(3,1fr); gap:8px; }
+    .opt{ padding:12px; font-size:14.5px; }
+  }
+
+  /* focus visibility for accessibility */
+  .opt:focus-visible, .btn:focus-visible, .fill-input:focus-visible, .btn-check:focus-visible{
+    outline:3px solid #7FE0D6; outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="app-header">
+    <svg class="droplet" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M24 4C24 4 10 22.5 10 31.5C10 39.5 16.5 44 24 44C31.5 44 38 39.5 38 31.5C38 22.5 24 4 24 4Z" fill="url(#dropGrad)"/>
+      <ellipse cx="18.5" cy="27" rx="3.2" ry="4.6" fill="#ffffff" opacity="0.55"/>
+      <defs>
+        <linearGradient id="dropGrad" x1="10" y1="4" x2="38" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#4FD1C5"/>
+          <stop offset="1" stop-color="#0B7C79"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="eyebrow">논문연구및특허 · 물성이론 1~5차시</div>
+    <h1>물성이론 <span class="flow">형성평가</span> 퀴즈</h1>
+    <p class="sub">흐름과 변형, 얼마나 이해했는지 20문항으로 점검해봅시다.</p>
+  </header>
+
+  <!-- progress + score (shown only during quiz) -->
+  <div id="hud" class="hidden">
+    <div class="tube-row">
+      <div class="tube"><div id="tubeFill" class="tube-fill"></div></div>
+      <div id="tubeLabel" class="tube-label">1 / 20</div>
+    </div>
+    <div class="score-row">
+      <div class="score-badge"><span class="pt-icon">💧</span>포인트 <b id="scoreVal">0</b></div>
+      <div id="streakLabel" class="streak"></div>
+    </div>
+  </div>
+
+  <!-- INTRO SCREEN -->
+  <section id="screen-intro" class="card intro-card">
+    <div class="intro-list">
+      <div class="intro-stat"><b>20</b><span>총 문항</span></div>
+      <div class="intro-stat"><b>5</b><span>차시 구성</span></div>
+      <div class="intro-stat"><b>즉시</b><span>정답 확인</span></div>
+    </div>
+    <p class="sub" style="text-align:left; margin-bottom:20px;">
+      객관식 4지선다와 괄호넣기 단답형이 섞여 있습니다. 문항을 클릭·입력하면 바로 정답 여부와 한 줄 해설이 나타나요. 끝나면 틀린 문항만 골라 다시 풀 수 있습니다.
+    </p>
+    <button class="btn btn-primary" id="btnStart">퀴즈 시작하기</button>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section id="screen-quiz" class="card hidden">
+    <div class="q-meta">
+      <span id="chipSession" class="chip chip-session">1차시</span>
+      <span id="chipDiff" class="chip">난이도</span>
+      <span id="chipType" class="chip chip-type">객관식</span>
+      <span id="qNum" class="q-num">Q1 / 20</span>
+    </div>
+    <h2 id="qPrompt" class="q-prompt"></h2>
+
+    <div id="optionsBox" class="options"></div>
+
+    <div id="fillBox" class="fill-row hidden">
+      <input id="fillInput" class="fill-input" type="text" placeholder="정답을 입력하세요" autocomplete="off">
+      <button id="btnCheck" class="btn-check">확인</button>
+    </div>
+
+    <div id="feedback" class="feedback">
+      <div id="fbTitle" class="fb-title"></div>
+      <div id="fbAnswer" class="fb-answer"></div>
+      <div id="fbExplain" class="fb-explain"></div>
+    </div>
+
+    <div class="next-row">
+      <button id="btnNext" class="btn btn-primary" disabled>다음 문항 →</button>
+    </div>
+  </section>
+
+  <!-- RESULT SCREEN -->
+  <section id="screen-result" class="card hidden">
+    <div class="result-hero">
+      <div class="ring-wrap">
+        <svg width="150" height="150" viewBox="0 0 150 150">
+          <circle cx="75" cy="75" r="64" fill="none" stroke="#EAF1F1" stroke-width="14"/>
+          <circle id="ringProgress" cx="75" cy="75" r="64" fill="none" stroke="url(#ringGrad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402" transform="rotate(-90 75 75)"/>
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="150" y2="150" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#4FD1C5"/>
+              <stop offset="1" stop-color="#0E9C98"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="ring-score">
+          <b id="resultPct">0%</b>
+          <span id="resultFrac">0 / 20</span>
+        </div>
+      </div>
+      <p id="resultMsg" class="result-msg">결과를 계산 중...</p>
+      <p id="resultSub" class="result-sub"></p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box"><b id="statCorrect">0</b><span>정답</span></div>
+      <div class="stat-box"><b id="statWrong">0</b><span>오답</span></div>
+      <div class="stat-box"><b id="statPoint">0</b><span>포인트</span></div>
+    </div>
+
+    <div class="review-list">
+      <div class="review-title">문항별 결과</div>
+      <div id="reviewBody"></div>
+    </div>
+
+    <div class="result-actions">
+      <button id="btnRetryWrong" class="btn btn-primary hidden">틀린 문항만 다시 풀기</button>
+      <button id="btnRestartAll" class="btn btn-ghost">처음부터 다시 풀기</button>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    유한대학교 유한바이오제약학과 · 논문연구및특허 물성이론(1~5차시) 형성평가<br>
+    본 파일은 인터넷 연결 없이 오프라인에서도 동일하게 동작합니다.
+  </p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ============ 퀴즈 데이터 (20문항 / 5차시) ============
+  const QUIZ = [
+    // ---- 1차시 ----
+    { id:1, session:"1차시", sessionTitle:"물성(Rheology)의 이해", type:"mc", difficulty:"하", points:5,
+      prompt:"물성학(Rheology)이라는 용어의 어원으로 옳은 것은?",
+      options:["그리스어 'Rheo(흐르다)' + 'Logy(학문)'","라틴어 'Rheum(강물)' + 'Ology(학문)'","그리스어 'Rhythmos(리듬)' + 'Logy(학문)'","영어 'Real(실제)' + 'Ology(학문)'"],
+      answerIndex:0,
+      explanation:"Rheology는 그리스어 'Rheo(흐르다)'와 'Logy(학문)'의 합성어로, 물질의 흐름·변형을 연구하는 학문이에요." },
+    { id:2, session:"1차시", sessionTitle:"물성(Rheology)의 이해", type:"fill", difficulty:"중", points:10,
+      prompt:"물질에 힘이 작용하여 형태가 변하거나 흐르는 동안 발생하는 역학적 특성을 연구하는 과학을 ( )(이)라고 한다.",
+      accepted:["물성학","rheology","유변학","레올로지"],
+      answerDisplay:"물성학 (Rheology, 유변학)",
+      explanation:"물질에 힘이 작용해 형태가 변하거나 흐르는 동안의 역학적 특성을 연구하는 과학, 바로 물성학이에요." },
+    { id:3, session:"1차시", sessionTitle:"물성(Rheology)의 이해", type:"mc", difficulty:"중", points:10,
+      prompt:"조직감(Texture)의 분류 중 '변형성질(Deformation Property)'의 대표 물리량에 해당하는 것은?",
+      options:["점성(Viscosity)","강도/경도(Hardness)","점조성(Consistency)","유동성(Flow property)"],
+      answerIndex:1,
+      explanation:"변형성질은 고체·반고체 제형에 적용되며 대표 물리량은 강도/경도, 응집성, 탄력성, 점착성이에요." },
+    { id:4, session:"1차시", sessionTitle:"물성(Rheology)의 이해", type:"mc", difficulty:"상", points:15,
+      prompt:"다음 중 '기계적 특성 파라미터 — 실생활 예시'의 연결이 잘못된 것은?",
+      options:["Hardness(경도) — 정제 알약","Cohesiveness(응집성) — 구미 젤리","Springiness(탄력성) — 카라멜","Adhesiveness(점착성) — 치약"],
+      answerIndex:2,
+      explanation:"카라멜은 Adhesiveness(점착성)의 대표 예시예요. Springiness(탄력성)의 예시는 푸딩, 백설기 떡, 스펀지케이크 등이에요." },
+
+    // ---- 2차시 ----
+    { id:5, session:"2차시", sessionTitle:"고체 물성 측정 — Stress, Strain, TPA", type:"mc", difficulty:"하", points:5,
+      prompt:"Stress(변형력)의 SI 단위로 옳은 것은?",
+      options:["N (뉴턴)","Pa (파스칼, N/m²)","J (줄)","N·s (뉴턴초)"],
+      answerIndex:1,
+      explanation:"Stress는 단위면적당 작용하는 힘의 강도이므로 단위는 Pa(N/m²)이며, CGS 단위로는 dyne/cm²예요." },
+    { id:6, session:"2차시", sessionTitle:"고체 물성 측정 — Stress, Strain, TPA", type:"fill", difficulty:"중", points:10,
+      prompt:"Strain(변형율, ε)은 원래 길이(L) 대비 길이 변화량(ΔL)의 비율(ε=ΔL/L)로 정의되며, 이때의 단위는 ( )이다.",
+      accepted:["없음","무차원","dimensionless","단위없음"],
+      answerDisplay:"없음 (무차원, dimensionless)",
+      explanation:"Strain은 길이 대 길이의 비율이므로 차원과 단위가 없는 무차원량이에요." },
+    { id:7, session:"2차시", sessionTitle:"고체 물성 측정 — Stress, Strain, TPA", type:"mc", difficulty:"상", points:15,
+      prompt:"TPA(Texture Profile Analysis)에서 Cohesiveness(응집성)를 산출하는 그래프 연산식은?",
+      options:["1차 압축 사이클의 최대 Peak 높이","2차 압축 곡선 면적 ÷ 1차 압축 곡선 면적","Hardness × Cohesiveness","1차 압축 후 복귀 시 나타나는 하단 음의 면적"],
+      answerIndex:1,
+      explanation:"Cohesiveness = Area2(2차 압축 곡선 면적) ÷ Area1(1차 압축 곡선 면적)로 산출해요." },
+    { id:8, session:"2차시", sessionTitle:"고체 물성 측정 — Stress, Strain, TPA", type:"mc", difficulty:"중", points:10,
+      prompt:"Bioyield point(생물학적 항복점)에 대한 설명으로 옳은 것은?",
+      options:["공학재료(철강, 플라스틱)의 항복점과 동일한 개념이다","압축 시 힘이 감소·정체되어도 변형은 오히려 늘어나는 지점이다","시료가 급격히 균열을 일으키며 거시적으로 완전히 파열되는 지점이다","힘을 제거하면 100% 원래 모양으로 복원되는 임계 변형력이다"],
+      answerIndex:1,
+      explanation:"Bioyield point는 압축 중 힘이 감소·정체되어도 변형만 늘어나는 지점으로, 농산물·겔의 최초 세포막 파괴를 정량화하는 지표예요." },
+
+    // ---- 3차시 ----
+    { id:9, session:"3차시", sessionTitle:"액체 물성측정 — 점도와 비뉴턴 유체", type:"mc", difficulty:"하", points:5,
+      prompt:"Newton의 점성법칙을 나타내는 기본 수식은? (τ: 전단응력, μ: 점도, γ: 전단율)",
+      options:["τ = μ · γ","E = σ / ε","F = m · a","P = F / A"],
+      answerIndex:0,
+      explanation:"Newton의 점성법칙은 전단응력이 점도와 전단율의 곱에 비례한다는 τ = μ·γ 로 표현돼요." },
+    { id:10, session:"3차시", sessionTitle:"액체 물성측정 — 점도와 비뉴턴 유체", type:"fill", difficulty:"중", points:10,
+      prompt:"전단율(전단속도, Shear Rate, γ)의 SI 단위는 ( )이다.",
+      accepted:["1/s","s-1","s⁻¹","1/초","초-1"],
+      answerDisplay:"1/s (s⁻¹)",
+      explanation:"γ = dv/dy = (cm/s)/cm = 1/s 이므로 단위는 1/s(=s⁻¹)예요." },
+    { id:11, session:"3차시", sessionTitle:"액체 물성측정 — 점도와 비뉴턴 유체", type:"mc", difficulty:"상", points:15,
+      prompt:"토마토 케찹처럼 일정 항복치(Yield Value)를 넘어야만 흐름이 시작되는 유체의 종류는?",
+      options:["유사소성(Pseudoplastic) 유체","딜라탄트(Dilatant) 유체","소성(Plastic) 유체","뉴턴성(Newtonian) 유체"],
+      answerIndex:2,
+      explanation:"소성(Plastic/Bingham) 유체는 일정한 항복치를 넘어야 흐름이 시작되며, 치약·마요네즈·토마토 케찹이 대표 예시예요." },
+    { id:12, session:"3차시", sessionTitle:"액체 물성측정 — 점도와 비뉴턴 유체", type:"mc", difficulty:"중", points:10,
+      prompt:"화장품 젤처럼 일정한 전단율에서 시간이 지날수록 점도가 감소했다가, 정지 시 다시 점도가 서서히 회복되는 유동 특성은?",
+      options:["레오펙틱성(Rheopectic)","요변성(Thixotropic)","딜라탄트(Dilatant)","유사소성(Pseudoplastic)"],
+      answerIndex:1,
+      explanation:"요변성(Thixotropic)은 시간에 따라 점도가 가역적으로 감소하는 현상으로, 화장품 젤·요변성 페인트가 대표 예시예요." },
+
+    // ---- 4차시 ----
+    { id:13, session:"4차시", sessionTitle:"기능성식품의 물성 소재", type:"fill", difficulty:"하", points:5,
+      prompt:"유산균, 오메가-3, 히알루론산처럼 장 건강·면역·항산화 등 실제 건강기능을 나타내는 성분을 ( )이라 한다.",
+      accepted:["생리활성성분","생리활성 성분"],
+      answerDisplay:"생리활성 성분",
+      explanation:"생리활성 성분은 '효능'을 담당하는 성분으로, 물성조절 소재(형태·질감 담당)와 역할이 구분돼요." },
+    { id:14, session:"4차시", sessionTitle:"기능성식품의 물성 소재", type:"fill", difficulty:"중", points:10,
+      prompt:"과일 유래 겔화제로, 점성 및 안정화 기능을 갖는 물성조절 소재는 ( )이다.",
+      accepted:["펙틴","pectin"],
+      answerDisplay:"펙틴",
+      explanation:"펙틴은 과일에서 유래한 겔화제로 점성 부여 및 안정화에 사용돼요." },
+    { id:15, session:"4차시", sessionTitle:"기능성식품의 물성 소재", type:"mc", difficulty:"중", points:10,
+      prompt:"캡슐화 및 방출 조절에 사용되는 물성조절 소재로 옳은 것은?",
+      options:["폴리소르베이트","리포좀","구아검","말토덱스트린"],
+      answerIndex:1,
+      explanation:"리포좀은 안정성 향상제로서 캡슐 코팅, 방출 조절, 성분 보호에 사용돼요." },
+    { id:16, session:"4차시", sessionTitle:"기능성식품의 물성 소재", type:"mc", difficulty:"상", points:15,
+      prompt:"기능성식품의 물성·점도 품질관리와 관련된 근거 규정은?",
+      options:["대한약전","건강기능식품의 기준 및 규격","화장품 기준 및 시험방법","의약품 품질심사 가이드라인"],
+      answerIndex:1,
+      explanation:"기능성식품의 물성·점도 관리 근거는 「건강기능식품의 기준 및 규격」(식품의약품안전처)이에요. [확인 필요: 최신 개정 여부는 원문 대조 필요]" },
+
+    // ---- 5차시 ----
+    { id:17, session:"5차시", sessionTitle:"의약품의 물성 소재 & 종합 비교", type:"mc", difficulty:"하", points:5,
+      prompt:"정제(Tablet)의 붕해도를 측정하는 기기는?",
+      options:["정제경도계","붕해시험기","마손시험기","파티클 카운터"],
+      answerIndex:1,
+      explanation:"정제의 물성 항목(경도·두께·붕해도·마손도) 중 붕해도는 붕해시험기로 측정해요." },
+    { id:18, session:"5차시", sessionTitle:"의약품의 물성 소재 & 종합 비교", type:"fill", difficulty:"중", points:10,
+      prompt:"의약품이 체내에서 얼마나 잘 흡수되는지를 나타내는 지표를 영문 약자로 ( )라 한다.",
+      accepted:["ba","bioavailability"],
+      answerDisplay:"BA (bioavailability, 생체이용률)",
+      explanation:"흡수율(BA, bioavailability) 및 용출 특성 예측은 의약품 물성 측정의 핵심 의의 중 하나예요." },
+    { id:19, session:"5차시", sessionTitle:"의약품의 물성 소재 & 종합 비교", type:"mc", difficulty:"상", points:15,
+      prompt:"다음 중 '제형 — 물성항목 — 측정기기'의 연결이 옳지 않은 것은?",
+      options:["정제 — 마손도 — 마손시험기","연고제/크림제 — 유변학 — 레오미터","현탁제/시럽제 — 점도 — Brookfield 점도계","흡입제(분말) — pH — pH meter"],
+      answerIndex:3,
+      explanation:"흡입제(분말)의 물성 항목은 입도·유동성·압축성이며 측정기기는 입도분석기·Powder Rheometer예요. pH는 점안제·주사제의 물성 항목이에요." },
+    { id:20, session:"5차시", sessionTitle:"의약품의 물성 소재 & 종합 비교", type:"mc", difficulty:"중", points:10,
+      prompt:"기능성식품·화장품·의약품 세 제품군에서 공통적으로 핵심 관리 항목으로 다뤄지는 물성은?",
+      options:["경도(Hardness)","점도(Viscosity)","pH","탄력성(Springiness)"],
+      answerIndex:1,
+      explanation:"세 제품군 모두 '점도'가 공통 핵심 물성 관리 항목이며, 3주차부터 브룩필드 점도계와 Texture Analyzer로 이를 직접 측정하게 돼요." },
+  ];
+
+  const TOTAL = QUIZ.length;
+  const MAX_POINTS = QUIZ.reduce((s,q)=>s+q.points,0);
+
+  // ============ 상태 ============
+  let order = QUIZ.map(q=>q.id);   // 현재 라운드에서 풀 문항 id 순서
+  let idx = 0;                      // order 내 인덱스
+  let score = 0;
+  let streak = 0;
+  let answered = {};                 // id -> boolean(correct)
+  let allWrongEver = new Set();      // 전체 라운드 통틀어 틀린 적 있는 id (표시용, 재풀이 후 갱신)
+  let isRetryMode = false;
+  let currentAnsweredThisQ = false;
+
+  // ============ DOM refs ============
+  const el = (id)=>document.getElementById(id);
+  const screenIntro = el('screen-intro');
+  const screenQuiz = el('screen-quiz');
+  const screenResult = el('screen-result');
+  const hud = el('hud');
+
+  el('btnStart').addEventListener('click', startQuiz);
+  el('btnNext').addEventListener('click', nextQuestion);
+  el('btnCheck').addEventListener('click', checkFillAnswer);
+  el('btnRetryWrong').addEventListener('click', retryWrongOnly);
+  el('btnRestartAll').addEventListener('click', restartAll);
+  el('fillInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && !el('fillInput').disabled) checkFillAnswer();
+  });
+
+  function byId(id){ return QUIZ.find(q=>q.id===id); }
+
+  function startQuiz(){
+    order = QUIZ.map(q=>q.id);
+    idx = 0; score = 0; streak = 0; answered = {}; isRetryMode = false;
+    screenIntro.classList.add('hidden');
+    screenResult.classList.add('hidden');
+    screenQuiz.classList.remove('hidden');
+    hud.classList.remove('hidden');
+    renderQuestion();
+  }
+
+  function currentQ(){ return byId(order[idx]); }
+
+  function renderHUD(){
+    const pct = Math.round(((idx)/order.length)*100);
+    el('tubeFill').style.width = ((idx)/order.length*100) + '%';
+    el('tubeLabel').textContent = (idx+1) + ' / ' + order.length;
+    el('scoreVal').textContent = score;
+    el('streakLabel').textContent = streak >= 2 ? ('🔥 ' + streak + '연속 정답') : '';
+  }
+
+  function renderQuestion(){
+    currentAnsweredThisQ = false;
+    const q = currentQ();
+    renderHUD();
+
+    el('chipSession').textContent = q.session + ' · ' + q.sessionTitle;
+    const diffChip = el('chipDiff');
+    diffChip.textContent = '난이도 ' + q.difficulty;
+    diffChip.className = 'chip chip-diff-' + q.difficulty;
+    el('chipType').textContent = q.type === 'mc' ? '객관식' : '괄호넣기';
+    el('qNum').textContent = 'Q' + (idx+1) + ' / ' + order.length;
+    el('qPrompt').textContent = q.prompt;
+
+    const optionsBox = el('optionsBox');
+    const fillBox = el('fillBox');
+    optionsBox.innerHTML = '';
+    el('feedback').className = 'feedback';
+    el('fillInput').value = '';
+    el('fillInput').disabled = false;
+    el('btnCheck').disabled = false;
+    el('btnNext').disabled = true;
+
+    if(q.type === 'mc'){
+      fillBox.classList.add('hidden');
+      optionsBox.classList.remove('hidden');
+      const nums = ['①','②','③','④'];
+      q.options.forEach((opt,i)=>{
+        const b = document.createElement('button');
+        b.className = 'opt';
+        b.innerHTML = '<span class="num">'+nums[i]+'</span><span>'+opt+'</span>';
+        b.addEventListener('click', ()=>handleMcAnswer(i, b));
+        optionsBox.appendChild(b);
+      });
+    } else {
+      optionsBox.classList.add('hidden');
+      fillBox.classList.remove('hidden');
+      setTimeout(()=>el('fillInput').focus(), 50);
+    }
+  }
+
+  function handleMcAnswer(selectedIndex, btnEl){
+    if(currentAnsweredThisQ) return;
+    currentAnsweredThisQ = true;
+    const q = currentQ();
+    const correct = selectedIndex === q.answerIndex;
+    const allOpts = Array.from(el('optionsBox').children);
+    allOpts.forEach((b,i)=>{
+      b.disabled = true;
+      if(i === q.answerIndex) b.classList.add('correct');
+      else if(i === selectedIndex) b.classList.add('wrong');
+      else b.classList.add('dim');
+    });
+    registerAnswer(correct);
+    showFeedback(correct, q.type==='mc' ? null : q.answerDisplay, q.explanation);
+  }
+
+  function checkFillAnswer(){
+    if(currentAnsweredThisQ) return;
+    const q = currentQ();
+    const raw = el('fillInput').value;
+    const norm = normalize(raw);
+    const correct = norm.length>0 && q.accepted.some(a => normalize(a) === norm);
+    currentAnsweredThisQ = true;
+    el('fillInput').disabled = true;
+    el('btnCheck').disabled = true;
+    registerAnswer(correct);
+    showFeedback(correct, q.answerDisplay, q.explanation);
+  }
+
+  function normalize(s){
+    return String(s||'').toLowerCase().replace(/\s+/g,'').replace(/[()]/g,'');
+  }
+
+  function registerAnswer(correct){
+    const q = currentQ();
+    answered[q.id] = correct;
+    if(correct){
+      score += q.points;
+      streak += 1;
+      if(isRetryMode) allWrongEver.delete(q.id);
+    } else {
+      streak = 0;
+      allWrongEver.add(q.id);
+    }
+    renderHUD();
+    el('btnNext').disabled = false;
+    if(idx === order.length-1){
+      el('btnNext').textContent = '결과 보기 →';
+    } else {
+      el('btnNext').textContent = '다음 문항 →';
+    }
+  }
+
+  function showFeedback(correct, answerDisplay, explanation){
+    const fb = el('feedback');
+    fb.className = 'feedback show ' + (correct ? 'ok' : 'no');
+    el('fbTitle').className = 'fb-title ' + (correct ? 'ok' : 'no');
+    el('fbTitle').innerHTML = correct ? '✅ 정답이에요!' : '❌ 아쉬워요, 오답이에요';
+    el('fbAnswer').innerHTML = answerDisplay ? ('정답 : ' + answerDisplay) : '';
+    el('fbAnswer').style.display = answerDisplay ? 'block' : 'none';
+    el('fbExplain').textContent = explanation;
+  }
+
+  function nextQuestion(){
+    if(idx < order.length-1){
+      idx += 1;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }
+
+  function showResult(){
+    screenQuiz.classList.add('hidden');
+    hud.classList.add('hidden');
+    screenResult.classList.remove('hidden');
+
+    const correctCount = order.filter(id=>answered[id]).length;
+    const wrongCount = order.length - correctCount;
+    const pct = Math.round((correctCount/order.length)*100);
+
+    el('resultPct').textContent = pct + '%';
+    el('resultFrac').textContent = correctCount + ' / ' + order.length;
+    el('statCorrect').textContent = correctCount;
+    el('statWrong').textContent = wrongCount;
+    el('statPoint').textContent = score;
+
+    const circumference = 402;
+    const offset = circumference - (circumference * pct/100);
+    const ring = el('ringProgress');
+    ring.style.transition = 'none';
+    ring.setAttribute('stroke-dashoffset', circumference);
+    requestAnimationFrame(()=>{
+      ring.style.transition = 'stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)';
+      ring.setAttribute('stroke-dashoffset', offset);
+    });
+
+    let msg, sub;
+    if(pct === 100){ msg = '완벽해요! 만점입니다 🎉'; sub = '5개 차시 내용을 정확히 이해하고 있어요.'; }
+    else if(pct >= 80){ msg = '아주 잘했어요! 조금만 더 다지면 완벽해요.'; sub = '헷갈린 문항의 해설을 한 번 더 읽어보세요.'; }
+    else if(pct >= 60){ msg = '기본기는 탄탄해요, 계속 다져봅시다.'; sub = '틀린 문항 위주로 다시 풀어보는 걸 추천해요.'; }
+    else { msg = '괜찮아요, 지금부터 채워가면 됩니다.'; sub = '틀린 문항만 골라 다시 풀며 개념을 정리해보세요.'; }
+    el('resultMsg').textContent = msg;
+    el('resultSub').textContent = sub;
+
+    // review list
+    const reviewBody = el('reviewBody');
+    reviewBody.innerHTML = '';
+    order.forEach((id,i)=>{
+      const q = byId(id);
+      const ok = !!answered[id];
+      const row = document.createElement('div');
+      row.className = 'review-item';
+      row.innerHTML =
+        '<div class="review-mark '+(ok?'ok':'no')+'">'+(ok?'✓':'✕')+'</div>'+
+        '<div class="review-text"><span class="q-line">Q'+(i+1)+'. '+escapeHtml(truncate(q.prompt,46))+'</span><br>'+
+        q.session+' · '+(ok?'정답':'오답 — 정답: '+ (q.type==='mc' ? q.options[q.answerIndex] : q.answerDisplay))+
+        '</div>';
+      reviewBody.appendChild(row);
+    });
+
+    const btnRetry = el('btnRetryWrong');
+    if(wrongCount > 0){
+      btnRetry.classList.remove('hidden');
+      btnRetry.textContent = '틀린 문항만 다시 풀기 (' + wrongCount + '문항)';
+    } else {
+      btnRetry.classList.add('hidden');
+    }
+  }
+
+  function retryWrongOnly(){
+    const wrongIds = order.filter(id=>!answered[id]);
+    if(wrongIds.length === 0) return;
+    order = wrongIds;
+    idx = 0;
+    isRetryMode = true;
+    answered = {};
+    streak = 0;
+    screenResult.classList.add('hidden');
+    screenQuiz.classList.remove('hidden');
+    hud.classList.remove('hidden');
+    renderQuestion();
+  }
+
+  function restartAll(){
+    startQuiz();
+  }
+
+  function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+})();
+</script>
+</body>
+</html>
