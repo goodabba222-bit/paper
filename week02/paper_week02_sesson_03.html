@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>형성평가 퀴즈 — 모의체외소화(INFOGEST)</title>
+<style>
+  :root {
+    --primary: #065A82;
+    --primary-dark: #0B3350;
+    --accent: #E07A5F;
+    --bg: #F3F8FB;
+    --card: #FFFFFF;
+    --correct: #2E7D32;
+    --correct-bg: #E8F5E9;
+    --wrong: #C62828;
+    --wrong-bg: #FDECEA;
+    --text: #232323;
+    --text-gray: #6B6B6B;
+    --border: #E7E7E7;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 640px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 0 0 48px 0;
+  }
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    background: var(--bg);
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .course {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+    color: var(--accent); text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .title {
+    font-size: 21px; font-weight: 800; color: var(--primary-dark);
+    margin: 0 0 2px 0; line-height: 1.3;
+  }
+  .subtitle {
+    font-size: 12.5px; color: var(--text-gray); margin: 0 0 14px 0;
+  }
+  .progress-wrap {
+    height: 8px; background: #E9EFE9; border-radius: 999px; overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 999px; transition: width 0.4s ease;
+  }
+  .meta-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: var(--text-gray); font-weight: 600;
+  }
+  .score-badge {
+    background: var(--primary); color: white; font-weight: 800;
+    padding: 4px 12px; border-radius: 999px; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 4px;
+    transition: transform 0.2s ease;
+  }
+  .score-badge.bump { transform: scale(1.18); }
+
+  main { padding: 22px 20px 0; }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
+    border: 1px solid var(--border);
+  }
+  .q-labels { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tag {
+    font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px;
+  }
+  .tag-type { background: #EEF3EE; color: var(--primary-dark); }
+  .tag-diff-하 { background: #E8F5E9; color: #2E7D32; }
+  .tag-diff-중 { background: #FFF3E0; color: #B35C00; }
+  .tag-diff-상 { background: #FDECEA; color: #C62828; }
+
+  .prompt { font-size: 16.5px; font-weight: 700; line-height: 1.5; margin-bottom: 18px; color: var(--text); }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    text-align: left;
+    padding: 13px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: #FCFCFC;
+    font-size: 15px; color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--primary); background: #F3F8F3; }
+  .option-btn:disabled { cursor: default; }
+  .opt-mark {
+    width: 24px; height: 24px; border-radius: 50%; background: #EFEFEF; color: var(--text-gray);
+    font-size: 12.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .option-btn.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option-btn.correct .opt-mark { background: var(--correct); color: white; }
+  .option-btn.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option-btn.wrong .opt-mark { background: var(--wrong); color: white; }
+
+  .blank-row { display: flex; gap: 8px; }
+  .blank-input {
+    flex: 1; padding: 13px 14px; border: 1.5px solid var(--border); border-radius: 12px;
+    font-size: 15px; font-family: inherit; outline: none;
+  }
+  .blank-input:focus { border-color: var(--primary); }
+  .blank-input.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .blank-input.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .submit-btn {
+    padding: 13px 18px; border: none; border-radius: 12px; background: var(--primary); color: white;
+    font-weight: 700; font-size: 14.5px; cursor: pointer; white-space: nowrap;
+  }
+  .submit-btn:disabled { opacity: 0.5; cursor: default; }
+  .submit-btn:hover:not(:disabled) { background: var(--primary-dark); }
+
+  .feedback {
+    margin-top: 16px; padding: 14px 15px; border-radius: 12px; font-size: 14px; line-height: 1.55;
+    display: none;
+  }
+  .feedback.show { display: block; animation: fadeIn 0.25s ease; }
+  .feedback.correct { background: var(--correct-bg); color: #1B5E20; border: 1px solid #BFE3C1; }
+  .feedback.wrong { background: var(--wrong-bg); color: #8E1F1F; border: 1px solid #F3C6C2; }
+  .feedback .fb-head { font-weight: 800; margin-bottom: 4px; font-size: 14.5px; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px);} to { opacity: 1; transform: translateY(0);} }
+
+  .next-btn {
+    margin-top: 16px; width: 100%; padding: 14px; border: none; border-radius: 12px;
+    background: var(--primary-dark); color: white; font-weight: 700; font-size: 15px; cursor: pointer;
+    display: none;
+  }
+  .next-btn.show { display: block; }
+  .next-btn:hover { opacity: 0.92; }
+
+  /* Result screen */
+  #resultArea { display: none; padding: 22px 20px 0; }
+  #resultArea.show { display: block; }
+  .result-hero {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white; border-radius: var(--radius); padding: 30px 22px; text-align: center;
+  }
+  .result-hero .big-score { font-size: 44px; font-weight: 900; margin: 6px 0 2px; }
+  .result-hero .sub { font-size: 13.5px; opacity: 0.85; }
+  .result-hero .rank { font-size: 14.5px; font-weight: 700; margin-top: 10px; background: rgba(255,255,255,0.15); display: inline-block; padding: 5px 14px; border-radius: 999px; }
+
+  .review-list { margin-top: 18px; display: flex; flex-direction: column; gap: 8px; }
+  .review-item { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); font-size: 13.5px; }
+  .review-item .ri-icon { font-size: 15px; flex-shrink: 0; }
+  .review-item.wrong { background: var(--wrong-bg); border-color: #F3C6C2; }
+  .review-item.correct { background: var(--correct-bg); border-color: #BFE3C1; }
+  .review-item .ri-text { color: var(--text); line-height: 1.45; }
+
+  .result-actions { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .btn-primary, .btn-secondary {
+    padding: 15px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; border: none; text-align: center;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { background: #FFFFFF; color: var(--primary-dark); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--primary); }
+
+  footer.foot { text-align: center; font-size: 11.5px; color: var(--text-gray); padding: 24px 20px 0; }
+
+  @media (max-width: 420px) {
+    .title { font-size: 19px; }
+    .prompt { font-size: 15.5px; }
+    .result-hero .big-score { font-size: 38px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="course">논문연구및특허 · 2주차 3차시</div>
+    <h1 class="title">형성평가 퀴즈 — 모의체외소화(INFOGEST)</h1>
+    <div class="subtitle">실험실에서 소화를 재현하는 3단계, 5문항으로 확인해보기</div>
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="meta-row">
+      <span id="qIndexLabel">문항 1 / 5</span>
+      <span class="score-badge" id="scoreBadge">⭐ <span id="scoreLabel">0</span>점</span>
+    </div>
+  </header>
+
+  <main id="quizArea"></main>
+
+  <section id="resultArea"></section>
+
+  <footer class="foot">3차시 · 모의체외소화(INFOGEST) · 형성평가 퀴즈 · 이 파일은 인터넷 연결 없이 동작합니다</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    "type": "mc",
+    "diff": "하",
+    "prompt": "INFOGEST 2.0에 대한 설명으로 가장 적절한 것은?",
+    "options": [
+      "특정 실험실만 사용하는 비공개 프로토콜이다",
+      "전 세계 연구자들이 동일한 조건으로 식품의 체외소화를 실험할 수 있도록 만든 국제 표준 프로토콜이다",
+      "사람에게 직접 소화액을 주입하는 임상시험 방법이다",
+      "소화효소를 전혀 사용하지 않는 단순화 모델이다"
+    ],
+    "answerIdx": 1,
+    "explanation": "INFOGEST 2.0은 국제 컨센서스로 만들어진 표준화된 정적(static) 체외소화 프로토콜입니다."
+  },
+  {
+    "type": "blank",
+    "diff": "하",
+    "prompt": "모의 체외소화는 구강기(Oral) → (　　) → 장기(Intestinal) 순서로 진행된다.",
+    "answer": "위기(Gastric)",
+    "accept": [
+      "위기",
+      "위기(Gastric)",
+      "위기(gastric)",
+      "Gastric",
+      "gastric"
+    ],
+    "explanation": "소화의 3단계 중 두 번째 단계는 위기(Gastric phase)입니다."
+  },
+  {
+    "type": "mc",
+    "diff": "중",
+    "prompt": "위기(Gastric Phase)의 조건으로 옳은 것은?",
+    "options": [
+      "pH 7, 2분",
+      "pH 3, 2시간",
+      "pH 7, 2시간",
+      "pH 3, 2분"
+    ],
+    "answerIdx": 1,
+    "explanation": "위기는 강산성(pH 3.0) 조건에서 2시간 동안 진행됩니다."
+  },
+  {
+    "type": "blank",
+    "diff": "중",
+    "prompt": "각 소화 단계에서 식품(또는 이전 단계 산물)과 소화액은 항상 (　　) 비율로 혼합한다.",
+    "answer": "1:1",
+    "accept": [
+      "1:1",
+      "1대1",
+      "1 : 1",
+      "1-1"
+    ],
+    "explanation": "구강기·위기·장기 모든 단계에서 1:1 비율로 소화액을 혼합하는 것이 공통 원칙입니다."
+  },
+  {
+    "type": "mc",
+    "diff": "상",
+    "prompt": "소화 후 시료를 다루는 방법으로 옳지 않은 것은?",
+    "options": [
+      "액체질소로 즉시 급속 냉동한다",
+      "단백질분해효소 억제제(protease inhibitor)를 첨가한다",
+      "실온에 두어 천천히 식힌 후 분석한다",
+      "필요시 동결건조(freeze dry)하여 보관한다"
+    ],
+    "answerIdx": 2,
+    "explanation": "실온에서 천천히 식히면 효소 반응이 계속 진행되어 결과가 왜곡될 수 있으므로, 급속 냉동 등으로 즉시 반응을 정지시켜야 합니다."
+  }
+];
+
+let order = QUESTIONS.map((_, i) => i);
+let current = 0;
+let score = 0;
+let results = []; // { qIndex, correct: bool }
+let answered = false;
+let isRetryRound = false;
+let retryPool = []; // question objects for retry
+
+const quizArea = document.getElementById('quizArea');
+const resultArea = document.getElementById('resultArea');
+const progressBar = document.getElementById('progressBar');
+const qIndexLabel = document.getElementById('qIndexLabel');
+const scoreLabel = document.getElementById('scoreLabel');
+const scoreBadge = document.getElementById('scoreBadge');
+
+function normalize(s) {
+  return String(s).trim().toLowerCase().replace(/\s+/g, '').replace(/[()（）]/g, '');
+}
+
+function bumpScore(delta) {
+  score += delta;
+  scoreLabel.textContent = score;
+  scoreBadge.classList.add('bump');
+  setTimeout(() => scoreBadge.classList.remove('bump'), 220);
+}
+
+function currentSet() {
+  return isRetryRound ? retryPool : QUESTIONS;
+}
+
+function renderProgress() {
+  const set = currentSet();
+  const pct = Math.round((current / set.length) * 100);
+  progressBar.style.width = pct + '%';
+  qIndexLabel.textContent = '문항 ' + (current + 1) + ' / ' + set.length + (isRetryRound ? ' (복습)' : '');
+}
+
+function renderQuestion() {
+  answered = false;
+  const set = currentSet();
+  const q = set[current];
+  renderProgress();
+
+  let optionsHTML = '';
+  if (q.type === 'mc') {
+    const marks = ['①','②','③','④'];
+    optionsHTML = '<div class="options" id="optionsWrap">' + q.options.map((opt, i) =>
+      '<button class="option-btn" data-idx="' + i + '" onclick="handleMC(' + i + ')">' +
+      '<span class="opt-mark">' + marks[i] + '</span><span>' + opt + '</span></button>'
+    ).join('') + '</div>';
+  } else {
+    optionsHTML = '<div class="blank-row">' +
+      '<input type="text" class="blank-input" id="blankInput" placeholder="답을 입력하세요">' +
+      '<button class="submit-btn" id="blankSubmit" onclick="handleBlank()">확인</button>' +
+      '</div>';
+  }
+
+  quizArea.innerHTML =
+    '<div class="card">' +
+      '<div class="q-labels">' +
+        '<span class="tag tag-type">' + (q.type === 'mc' ? '객관식' : '괄호넣기') + '</span>' +
+        '<span class="tag tag-diff-' + q.diff + '">난이도 ' + q.diff + '</span>' +
+      '</div>' +
+      '<div class="prompt">' + (current + 1) + '. ' + q.prompt + '</div>' +
+      optionsHTML +
+      '<div class="feedback" id="feedback"></div>' +
+      '<button class="next-btn" id="nextBtn" onclick="goNext()">' + (current === set.length - 1 ? '결과 보기' : '다음 문항 →') + '</button>' +
+    '</div>';
+
+  if (q.type === 'blank') {
+    setTimeout(() => {
+      const el = document.getElementById('blankInput');
+      if (el) {
+        el.focus();
+        el.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') handleBlank();
+        });
+      }
+    }, 50);
+  }
+}
+
+function showFeedback(isCorrect, q) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+  fb.innerHTML = '<div class="fb-head">' + (isCorrect ? '✅ 정답입니다!' : '❌ 아쉬워요') + '</div>' +
+    '<div>' + q.explanation + '</div>';
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function handleMC(idx) {
+  if (answered) return;
+  answered = true;
+  const set = currentSet();
+  const q = set[current];
+  const buttons = document.querySelectorAll('#optionsWrap .option-btn');
+  buttons.forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.answerIdx) b.classList.add('correct');
+    else if (i === idx) b.classList.add('wrong');
+  });
+  const isCorrect = idx === q.answerIdx;
+  registerResult(isCorrect, q);
+  showFeedback(isCorrect, q);
+}
+
+function handleBlank() {
+  if (answered) return;
+  const input = document.getElementById('blankInput');
+  const val = input.value;
+  if (!val.trim()) { input.focus(); return; }
+  answered = true;
+  const set = currentSet();
+  const q = set[current];
+  const norm = normalize(val);
+  const isCorrect = q.accept.some(a => normalize(a) === norm);
+  input.disabled = true;
+  document.getElementById('blankSubmit').disabled = true;
+  input.classList.add(isCorrect ? 'correct' : 'wrong');
+  registerResult(isCorrect, q);
+  showFeedback(isCorrect, q);
+  if (!isCorrect) {
+    input.value = val + '   (정답: ' + q.answer + ')';
+  }
+}
+
+function registerResult(isCorrect, q) {
+  if (isCorrect) bumpScore(10);
+  results.push({ q, correct: isCorrect });
+}
+
+function goNext() {
+  const set = currentSet();
+  if (current < set.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    finishRound();
+  }
+}
+
+function finishRound() {
+  quizArea.innerHTML = '';
+  progressBar.style.width = '100%';
+  qIndexLabel.textContent = isRetryRound ? '복습 완료' : '전체 완료';
+
+  const total = results.length;
+  const correctCount = results.filter(r => r.correct).length;
+  const wrongOnes = results.filter(r => !r.correct).map(r => r.q);
+  const pct = Math.round((correctCount / total) * 100);
+
+  let rankText = '';
+  if (pct === 100) rankText = '🏆 완벽해요!';
+  else if (pct >= 80) rankText = '👏 아주 잘했어요';
+  else if (pct >= 60) rankText = '🙂 조금만 더!';
+  else rankText = '📖 다시 복습해봐요';
+
+  let reviewHTML = results.map(r => {
+    const icon = r.correct ? '✅' : '❌';
+    const cls = r.correct ? 'correct' : 'wrong';
+    return '<div class="review-item ' + cls + '"><span class="ri-icon">' + icon + '</span><span class="ri-text">' + r.q.prompt + '</span></div>';
+  }).join('');
+
+  let actionsHTML = '<div class="result-actions">';
+  if (wrongOnes.length > 0) {
+    actionsHTML += '<button class="btn-primary" onclick="retryWrong()">틀린 문항만 다시 풀기 (' + wrongOnes.length + '문항)</button>';
+  }
+  actionsHTML += '<button class="btn-secondary" onclick="restartAll()">처음부터 다시 풀기</button>';
+  actionsHTML += '</div>';
+
+  resultArea.innerHTML =
+    '<div class="result-hero">' +
+      '<div class="sub">' + (isRetryRound ? '복습 라운드 결과' : '형성평가 결과') + '</div>' +
+      '<div class="big-score">' + correctCount + ' / ' + total + '</div>' +
+      '<div class="sub">정답률 ' + pct + '%</div>' +
+      '<div class="rank">' + rankText + '</div>' +
+    '</div>' +
+    '<div class="review-list">' + reviewHTML + '</div>' +
+    actionsHTML;
+  resultArea.classList.add('show');
+
+  window._lastWrong = wrongOnes;
+}
+
+function retryWrong() {
+  const wrongOnes = window._lastWrong || [];
+  if (wrongOnes.length === 0) return;
+  retryPool = wrongOnes;
+  isRetryRound = true;
+  current = 0;
+  results = [];
+  resultArea.classList.remove('show');
+  resultArea.innerHTML = '';
+  renderQuestion();
+}
+
+function restartAll() {
+  isRetryRound = false;
+  retryPool = [];
+  current = 0;
+  results = [];
+  score = 0;
+  scoreLabel.textContent = '0';
+  resultArea.classList.remove('show');
+  resultArea.innerHTML = '';
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+</body>
+</html>
