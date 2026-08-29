@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>항산화력 측정 이론강의 형성평가</title>
+<style>
+  :root{
+    --forest:#1B4D3E;
+    --forest-dark:#0D2818;
+    --sage:#8FBC94;
+    --amber:#E8A33D;
+    --amber-soft:#FBF1DC;
+    --bg:#F7F9F7;
+    --card:#FFFFFF;
+    --ink:#1F2A24;
+    --muted:#5C6B62;
+    --line:#E1E8E2;
+    --correct:#2E7D32;
+    --correct-bg:#E9F5EA;
+    --wrong:#B3441E;
+    --wrong-bg:#FBEAE3;
+    --purple-deep:#5B2A86;
+    --purple-light:#F3EAF6;
+    --radius:16px;
+    --serif: Cambria, Georgia, "Noto Serif KR", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    padding-bottom:40px;
+  }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:18px 16px 8px;
+  }
+
+  /* ---------- Header ---------- */
+  .hero{
+    text-align:center;
+    padding:22px 12px 18px;
+  }
+  .hero .eyebrow{
+    font-size:12px;
+    letter-spacing:2px;
+    font-weight:700;
+    color:var(--sage);
+    background:var(--forest-dark);
+    display:inline-block;
+    padding:5px 14px;
+    border-radius:999px;
+    margin-bottom:12px;
+  }
+  .hero h1{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(22px, 5.4vw, 30px);
+    color:var(--forest);
+    margin:0 0 8px;
+    line-height:1.3;
+  }
+  .hero p{
+    margin:0;
+    color:var(--muted);
+    font-size:clamp(13px, 3.4vw, 15px);
+  }
+
+  /* ---------- Status bar ---------- */
+  .status{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-bottom:14px;
+  }
+  .status-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+    font-size:13px;
+    font-weight:700;
+    color:var(--forest);
+  }
+  .status-row .qcount{ color:var(--muted); font-weight:600; }
+  .progress-track{
+    height:8px;
+    background:var(--line);
+    border-radius:999px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg, var(--sage), var(--forest));
+    border-radius:999px;
+    transition:width .35s ease;
+  }
+
+  /* ---------- Score / DPPH gauge (signature element) ---------- */
+  .gauge-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .gauge-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:6px;
+  }
+  .gauge-title{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--muted);
+    letter-spacing:.3px;
+  }
+  .gauge-score{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:22px;
+    color:var(--forest);
+  }
+  .gauge-score span{
+    font-size:13px;
+    font-weight:600;
+    color:var(--muted);
+  }
+  .gauge-track{
+    height:22px;
+    border-radius:999px;
+    background:var(--purple-deep);
+    overflow:hidden;
+    position:relative;
+    border:1px solid #40206b;
+  }
+  .gauge-fill{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    transition:width .5s ease, background-color .5s ease;
+  }
+  .gauge-caption{
+    margin-top:8px;
+    font-size:11.5px;
+    color:var(--muted);
+    line-height:1.4;
+  }
+
+  /* ---------- Question card ---------- */
+  .qcard{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px 18px 18px;
+    animation:fadein .28s ease;
+  }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .tag-row{
+    display:flex;
+    gap:6px;
+    margin-bottom:12px;
+    flex-wrap:wrap;
+  }
+  .tag{
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:999px;
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--muted);
+  }
+  .tag.level-하{ color:#2E7D32; border-color:#cfe8d1; background:#EFF6F1; }
+  .tag.level-중{ color:#8A5A12; border-color:#f0dfb6; background:var(--amber-soft); }
+  .tag.level-상{ color:#B22222; border-color:#f1c9c0; background:var(--wrong-bg); }
+  .tag.type-tag{ color:var(--forest); border-color:#cfe0d5; background:#EFF6F1; }
+
+  .qtext{
+    font-size:clamp(16px, 4.2vw, 18px);
+    font-weight:600;
+    line-height:1.5;
+    margin:0 0 16px;
+    color:var(--ink);
+  }
+
+  .options{ display:flex; flex-direction:column; gap:9px; }
+  .opt-btn{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    text-align:left;
+    background:var(--bg);
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    font-size:14.5px;
+    color:var(--ink);
+    font-family:inherit;
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .opt-btn:hover:not(:disabled){ border-color:var(--sage); background:#F0F7F1; }
+  .opt-btn:active:not(:disabled){ transform:scale(.99); }
+  .opt-btn:focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+  .opt-btn .num{
+    flex:0 0 auto;
+    font-weight:700;
+    color:var(--forest);
+    margin-right:2px;
+  }
+  .opt-btn:disabled{ cursor:default; }
+  .opt-btn.correct{ background:var(--correct-bg); border-color:var(--correct); }
+  .opt-btn.correct .num{ color:var(--correct); }
+  .opt-btn.wrong{ background:var(--wrong-bg); border-color:var(--wrong); }
+  .opt-btn.wrong .num{ color:var(--wrong); }
+  .opt-btn.dim{ opacity:.55; }
+
+  .blank-row{ display:flex; gap:8px; }
+  .blank-input{
+    flex:1;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:13px 14px;
+    font-size:15px;
+    font-family:inherit;
+    background:var(--bg);
+    color:var(--ink);
+  }
+  .blank-input:focus{ outline:none; border-color:var(--forest); background:#fff; }
+  .blank-input.correct{ border-color:var(--correct); background:var(--correct-bg); }
+  .blank-input.wrong{ border-color:var(--wrong); background:var(--wrong-bg); }
+  .confirm-btn{
+    flex:0 0 auto;
+    background:var(--forest);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    padding:0 20px;
+    font-size:14.5px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .confirm-btn:disabled{ background:#9db3a8; cursor:default; }
+  .confirm-btn:focus-visible{ outline:3px solid var(--amber); outline-offset:2px; }
+
+  .feedback{
+    margin-top:16px;
+    border-radius:12px;
+    padding:14px 15px;
+    font-size:14px;
+    line-height:1.55;
+    display:none;
+  }
+  .feedback.show{ display:block; animation:fadein .25s ease; }
+  .feedback.correct{ background:var(--correct-bg); border:1px solid #bfe0c3; }
+  .feedback.wrong{ background:var(--wrong-bg); border:1px solid #eec3b3; }
+  .feedback .fb-head{
+    font-weight:800;
+    margin-bottom:4px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .feedback.correct .fb-head{ color:var(--correct); }
+  .feedback.wrong .fb-head{ color:var(--wrong); }
+  .feedback .fb-ans{ font-weight:700; color:var(--ink); }
+
+  .next-btn{
+    margin-top:16px;
+    width:100%;
+    background:var(--amber);
+    color:#4a2f04;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-size:15px;
+    font-weight:800;
+    font-family:inherit;
+    cursor:pointer;
+    display:none;
+  }
+  .next-btn.show{ display:block; animation:fadein .25s ease; }
+  .next-btn:hover{ filter:brightness(1.05); }
+  .next-btn:focus-visible{ outline:3px solid var(--forest); outline-offset:2px; }
+
+  /* ---------- Results ---------- */
+  .results{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 20px;
+    text-align:center;
+  }
+  .results h2{
+    font-family:var(--serif);
+    color:var(--forest);
+    font-size:clamp(20px,5vw,26px);
+    margin:2px 0 4px;
+  }
+  .results .sub{ color:var(--muted); font-size:14px; margin-bottom:18px; }
+  .score-big{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:44px;
+    color:var(--forest);
+    margin:6px 0 2px;
+  }
+  .score-big span{ font-size:18px; color:var(--muted); font-weight:600; }
+
+  .review-list{
+    text-align:left;
+    margin:18px 0;
+    padding:0;
+    list-style:none;
+  }
+  .review-list li{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:10px 12px;
+    margin-bottom:8px;
+    font-size:13.5px;
+    background:var(--bg);
+  }
+  .review-list .rl-topic{ font-weight:700; color:var(--forest); }
+  .review-list .rl-ans{ color:var(--muted); }
+
+  .btn-row{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .btn{
+    flex:1 1 auto;
+    min-width:140px;
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-size:14.5px;
+    font-weight:800;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .btn:focus-visible{ outline:3px solid var(--forest); outline-offset:2px; }
+  .btn-primary{ background:var(--forest); color:#fff; }
+  .btn-primary:hover{ background:#153e32; }
+  .btn-secondary{ background:var(--bg); color:var(--forest); border:1.5px solid var(--line); }
+  .btn-secondary:hover{ border-color:var(--sage); }
+
+  .celebrate{
+    font-size:34px;
+    margin-bottom:6px;
+  }
+
+  footer.note{
+    text-align:center;
+    color:var(--muted);
+    font-size:11.5px;
+    margin-top:22px;
+    padding:0 12px;
+    line-height:1.6;
+  }
+
+  @media (min-width:480px){
+    .wrap{ padding-top:28px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <span class="eyebrow">논문연구및특허 · 유한바이오제약학과</span>
+    <h1>항산화력 측정 이론강의<br>형성평가</h1>
+    <p>실습 전 자가진단 퀴즈 · 객관식 7문항 + 괄호넣기 3문항</p>
+  </div>
+
+  <div class="status">
+    <div class="status-row">
+      <span id="statusLabel">퀴즈 시작 전</span>
+      <span class="qcount" id="qCount">0 / 10</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="gauge-card">
+    <div class="gauge-head">
+      <span class="gauge-title">항산화력 게이지 · DPPH 소거율 비유</span>
+      <span class="gauge-score"><span>점수 </span><span id="scoreNum">0</span><span> / 100</span></span>
+    </div>
+    <div class="gauge-track">
+      <div class="gauge-fill" id="gaugeFill"></div>
+    </div>
+    <p class="gauge-caption">DPPH법에서는 항산화력이 강할수록 보라색이 옅어졌죠 — 정답을 맞힐 때마다 이 막대도 옅어집니다.</p>
+  </div>
+
+  <div id="quizArea"></div>
+
+</div>
+
+<script>
+(function(){
+
+  // ---------------- 문항 데이터 ----------------
+  const QUESTIONS = [
+    {
+      level:"하", type:"mcq", topic:"산화의 정의",
+      q:"산화(Oxidation)에 대한 설명으로 가장 적절한 것은?",
+      options:["물질이 전자를 얻는 반응이다","물질이 전자를 잃는 반응이다","물질이 수소를 얻는 반응이다","물질의 부피가 증가하는 반응이다"],
+      answer:1,
+      explain:"산화는 물질이 전자를 잃는 화학 반응이다."
+    },
+    {
+      level:"하", type:"blank", topic:"항산화물질의 정의",
+      q:"항산화물질은 자유라디칼이나 ( ) 을(를) 제거하거나 억제하여 세포를 보호하는 물질이다.",
+      accepted:["활성산소","ROS","활성산소종","활성산소(ROS)","활성산소 ros"],
+      display:"활성산소(ROS)",
+      explain:"활성산소(ROS)를 제거·억제해 세포를 보호하는 것이 항산화물질의 역할이다."
+    },
+    {
+      level:"하", type:"mcq", topic:"천연 항산화물질 분류",
+      q:"다음 중 '지용성' 비타민으로서 항산화 작용을 하는 것은?",
+      options:["비타민 C","비타민 E","비타민 B","비타민 D"],
+      answer:1,
+      explain:"비타민 E는 지용성, 비타민 C는 수용성 항산화 비타민이다."
+    },
+    {
+      level:"중", type:"mcq", topic:"항산화 작용기작 (HAT/SET)",
+      q:"항산화 작용기작 중 '전자(e⁻) 1개를 라디칼에 전달하여 안정화시키는 방식'은?",
+      options:["HAT (Hydrogen Atom Transfer)","SET (Single Electron Transfer)","금속이온 킬레이션","라디칼 사슬반응 억제"],
+      answer:1,
+      explain:"SET는 전자 1개를 전달해 라디칼을 안정화하는 방식이다."
+    },
+    {
+      level:"중", type:"blank", topic:"표준물질과 TEAC",
+      q:"시료의 항산화력을 표준물질(Trolox)과 비교해 수치로 환산한 값을 ( )라고 한다.",
+      accepted:["TEAC","teac","trolox equivalent","trolox환산값","트롤록스환산값","trolox equivalent antioxidant capacity"],
+      display:"TEAC (Trolox 환산값)",
+      explain:"표준물질(Trolox) 대비 환산한 항산화능 지수를 TEAC라고 한다."
+    },
+    {
+      level:"중", type:"mcq", topic:"DPPH법",
+      q:"DPPH법에 대한 설명으로 옳은 것은?",
+      options:["청록색 라디칼이 탈색되는 정도로 측정한다","517 nm에서 흡광도를 측정한다","수용성·지용성 시료 모두에 적용하기 위해 만들어졌다","Fe³⁺을 Fe²⁺로 환원시키는 능력을 측정한다"],
+      answer:1,
+      explain:"DPPH는 보라색 라디칼이며 517 nm에서 흡광도를 측정해 항산화력을 정량화한다."
+    },
+    {
+      level:"중", type:"mcq", topic:"ABTS법",
+      q:"ABTS법이 DPPH법과 비교했을 때 갖는 가장 큰 특징은?",
+      options:["형광 리더기가 필요하다","수용성·지용성 시료 모두에 적용할 수 있다","철 이온의 환원력을 측정한다","총 페놀 함량을 정량한다"],
+      answer:1,
+      explain:"ABTS는 DPPH와 달리 수용성·지용성 시료 모두에 적용 가능하다."
+    },
+    {
+      level:"상", type:"mcq", topic:"FRAP법",
+      q:"FRAP법의 측정 원리로 가장 적절한 것은?",
+      options:["라디칼을 직접 소거하는 능력을 측정한다","형광물질의 형광 감소 정도를 측정한다","Fe³⁺을 Fe²⁺로 환원시키는 능력을 측정한다","폴리페놀과 반응해 파란색을 형성하는 정도를 측정한다"],
+      answer:2,
+      explain:"FRAP는 철 이온(Fe³⁺→Fe²⁺)의 환원력을 이용해 항산화 용량을 추정한다."
+    },
+    {
+      level:"상", type:"mcq", topic:"결과지표 해석 (IC50 응용)",
+      q:"시료 A의 IC50는 25 μg/mL, 시료 B의 IC50는 80 μg/mL이다. 두 시료를 옳게 비교한 것은?",
+      options:["A가 B보다 항산화력이 강하다","B가 A보다 항산화력이 강하다","두 시료의 항산화력은 동일하다","IC50만으로는 비교할 수 없다"],
+      answer:0,
+      explain:"IC50은 값이 작을수록 적은 농도로도 라디칼 50%를 소거했다는 뜻이므로 A가 더 강하다."
+    },
+    {
+      level:"중", type:"blank", topic:"총 페놀 정량법",
+      q:"폴리페놀류와 반응 시 파란색을 형성하는 성질을 이용해 총 페놀 함량을 측정하는 대표적 방법은 ( )이다.",
+      accepted:["folin-ciocalteu","folinciocalteu","폴린-치오칼토","폴린치오칼토","폴린-치오칼토법","폴린치오칼토법","folin ciocalteu"],
+      display:"Folin-Ciocalteu법",
+      explain:"폴리페놀류와 반응해 파란색을 형성하는 Folin-Ciocalteu법으로 총 페놀 함량을 정량한다."
+    },
+  ];
+  const NUM = ["①","②","③","④"];
+  const TOTAL_Q = QUESTIONS.length;
+  const POINTS_PER_Q = 100 / TOTAL_Q;
+
+  // ---------------- 상태 ----------------
+  let queue = QUESTIONS.map((_,i)=>i);   // 현재 라운드에서 풀 문항 인덱스 목록
+  let qi = 0;                             // queue 내 현재 위치
+  let score = 0;
+  let wrongSet = new Set();               // 아직 정답을 못 맞춘 원본 문항 인덱스
+  let mode = "main";                      // 'main' | 'retry'
+  let answeredThisQ = false;
+
+  const quizArea = document.getElementById("quizArea");
+  const progressFill = document.getElementById("progressFill");
+  const qCount = document.getElementById("qCount");
+  const statusLabel = document.getElementById("statusLabel");
+  const scoreNum = document.getElementById("scoreNum");
+  const gaugeFill = document.getElementById("gaugeFill");
+
+  function normalize(s){
+    return s.toString().trim().toLowerCase()
+      .replace(/\s+/g,"")
+      .replace(/[()]/g,"")
+      .replace(/[-‐‑–—]/g,"");
+  }
+
+  function lerpColor(hexA, hexB, t){
+    const a = hexToRgb(hexA), b = hexToRgb(hexB);
+    const r = Math.round(a.r + (b.r-a.r)*t);
+    const g = Math.round(a.g + (b.g-a.g)*t);
+    const bl = Math.round(a.b + (b.b-a.b)*t);
+    return `rgb(${r},${g},${bl})`;
+  }
+  function hexToRgb(hex){
+    const v = hex.replace("#","");
+    return {
+      r: parseInt(v.substring(0,2),16),
+      g: parseInt(v.substring(2,4),16),
+      b: parseInt(v.substring(4,6),16),
+    };
+  }
+
+  function updateHeader(){
+    const posInQueue = Math.min(qi+1, queue.length);
+    qCount.textContent = `${posInQueue} / ${queue.length}`;
+    statusLabel.textContent = mode === "main" ? "형성평가 진행 중" : "틀린 문항 다시 풀기";
+    const pct = ((qi + (answeredThisQ?1:0)) / queue.length) * 100;
+    progressFill.style.width = Math.min(pct,100) + "%";
+
+    scoreNum.textContent = Math.round(score);
+    const gp = Math.max(0, Math.min(100, score));
+    gaugeFill.style.width = gp + "%";
+    gaugeFill.style.backgroundColor = lerpColor("#5B2A86", "#F3EAF6", gp/100);
+  }
+
+  function renderQuestion(){
+    answeredThisQ = false;
+    updateHeader();
+
+    const idx = queue[qi];
+    const q = QUESTIONS[idx];
+    const card = document.createElement("div");
+    card.className = "qcard";
+
+    const typeLabel = q.type === "mcq" ? "객관식" : "괄호넣기";
+    card.innerHTML = `
+      <div class="tag-row">
+        <span class="tag level-${q.level}">난이도 ${q.level}</span>
+        <span class="tag type-tag">${typeLabel}</span>
+        <span class="tag">${q.topic}</span>
+      </div>
+      <p class="qtext">${q.q}</p>
+      <div id="answerZone"></div>
+      <div class="feedback" id="feedback">
+        <div class="fb-head" id="fbHead"></div>
+        <div id="fbBody"></div>
+      </div>
+      <button class="next-btn" id="nextBtn">다음 문항 →</button>
+    `;
+    quizArea.innerHTML = "";
+    quizArea.appendChild(card);
+
+    const answerZone = card.querySelector("#answerZone");
+    const feedback = card.querySelector("#feedback");
+    const fbHead = card.querySelector("#fbHead");
+    const fbBody = card.querySelector("#fbBody");
+    const nextBtn = card.querySelector("#nextBtn");
+
+    if (qi === queue.length - 1) {
+      nextBtn.textContent = mode === "main" ? "결과 보기 →" : "재도전 결과 보기 →";
+    } else {
+      nextBtn.textContent = "다음 문항 →";
+    }
+
+    if (q.type === "mcq") {
+      const optWrap = document.createElement("div");
+      optWrap.className = "options";
+      q.options.forEach((opt,i)=>{
+        const b = document.createElement("button");
+        b.className = "opt-btn";
+        b.innerHTML = `<span class="num">${NUM[i]}</span><span>${opt}</span>`;
+        b.addEventListener("click", ()=> handleMcqAnswer(i, idx, optWrap, feedback, fbHead, fbBody, nextBtn));
+        optWrap.appendChild(b);
+      });
+      answerZone.appendChild(optWrap);
+    } else {
+      const row = document.createElement("div");
+      row.className = "blank-row";
+      row.innerHTML = `
+        <input type="text" class="blank-input" id="blankInput" placeholder="정답을 입력하세요" autocomplete="off">
+        <button class="confirm-btn" id="confirmBtn">확인</button>
+      `;
+      answerZone.appendChild(row);
+      const input = row.querySelector("#blankInput");
+      const confirmBtn = row.querySelector("#confirmBtn");
+      const submit = () => handleBlankAnswer(input, idx, confirmBtn, feedback, fbHead, fbBody, nextBtn);
+      confirmBtn.addEventListener("click", submit);
+      input.addEventListener("keydown", (e)=>{ if(e.key === "Enter"){ e.preventDefault(); submit(); } });
+    }
+
+    nextBtn.addEventListener("click", goNext);
+  }
+
+  function handleMcqAnswer(selected, idx, optWrap, feedback, fbHead, fbBody, nextBtn){
+    if (answeredThisQ) return;
+    answeredThisQ = true;
+    const q = QUESTIONS[idx];
+    const buttons = optWrap.querySelectorAll(".opt-btn");
+    const isCorrect = selected === q.answer;
+
+    buttons.forEach((b,i)=>{
+      b.disabled = true;
+      if (i === q.answer) b.classList.add("correct");
+      else if (i === selected) b.classList.add("wrong");
+      else b.classList.add("dim");
+    });
+
+    applyResult(isCorrect, idx, feedback, fbHead, fbBody, null);
+    nextBtn.classList.add("show");
+    updateHeader();
+  }
+
+  function handleBlankAnswer(input, idx, confirmBtn, feedback, fbHead, fbBody, nextBtn){
+    if (answeredThisQ) return;
+    const val = input.value;
+    if (!val.trim()) { input.focus(); return; }
+    answeredThisQ = true;
+    const q = QUESTIONS[idx];
+    const norm = normalize(val);
+    const isCorrect = q.accepted.some(a => normalize(a) === norm);
+
+    input.disabled = true;
+    confirmBtn.disabled = true;
+    input.classList.add(isCorrect ? "correct" : "wrong");
+
+    applyResult(isCorrect, idx, feedback, fbHead, fbBody, q.display);
+    nextBtn.classList.add("show");
+    updateHeader();
+  }
+
+  function applyResult(isCorrect, idx, feedback, fbHead, fbBody, correctDisplay){
+    const q = QUESTIONS[idx];
+    feedback.classList.add("show", isCorrect ? "correct" : "wrong");
+
+    if (isCorrect) {
+      fbHead.textContent = "✅ 정답입니다!";
+      if (mode === "main") { score += POINTS_PER_Q; }
+      else if (wrongSet.has(idx)) { score += POINTS_PER_Q; wrongSet.delete(idx); }
+    } else {
+      fbHead.textContent = "❌ 오답입니다";
+      wrongSet.add(idx);
+    }
+
+    let body = q.explain;
+    if (!isCorrect && correctDisplay) {
+      body = `<span class="fb-ans">정답: ${correctDisplay}</span><br>${q.explain}`;
+    }
+    fbBody.innerHTML = body;
+  }
+
+  function goNext(){
+    if (qi < queue.length - 1) {
+      qi++;
+      renderQuestion();
+    } else {
+      renderResults();
+    }
+  }
+
+  function renderResults(){
+    updateHeader();
+    statusLabel.textContent = "결과";
+    progressFill.style.width = "100%";
+
+    const wrongCount = wrongSet.size;
+    const correctCount = TOTAL_Q - wrongCount;
+    const pct = Math.round(score);
+
+    const card = document.createElement("div");
+    card.className = "results";
+
+    let headline, sub, celebrate = "";
+    if (wrongCount === 0) {
+      celebrate = `<div class="celebrate">🎉</div>`;
+      headline = "모든 문항을 맞혔습니다!";
+      sub = "항산화력 게이지가 완전히 옅어졌어요 — 만점입니다.";
+    } else if (mode === "retry") {
+      headline = "재도전 결과";
+      sub = wrongCount > 0 ? `아직 ${wrongCount}문항이 남았어요. 한 번 더 도전해보세요.` : "";
+    } else {
+      headline = "형성평가 결과";
+      sub = `${wrongCount}문항을 다시 확인해보면 좋겠어요.`;
+    }
+
+    let listHtml = "";
+    if (wrongCount > 0) {
+      const items = QUESTIONS.map((q,i)=>({q,i})).filter(o=>wrongSet.has(o.i));
+      listHtml = `<ul class="review-list">` + items.map(o=>{
+        const ans = o.q.type === "mcq" ? `${NUM[o.q.answer]} ${o.q.options[o.q.answer]}` : o.q.display;
+        return `<li><div class="rl-topic">문항 ${o.i+1} · ${o.q.topic}</div><div class="rl-ans">정답: ${ans}</div></li>`;
+      }).join("") + `</ul>`;
+    }
+
+    card.innerHTML = `
+      ${celebrate}
+      <h2>${headline}</h2>
+      <p class="sub">${sub}</p>
+      <div class="score-big">${pct}<span> / 100점</span></div>
+      <p class="sub" style="margin-top:2px;">정답 ${correctCount} / ${TOTAL_Q} 문항</p>
+      ${listHtml}
+      <div class="btn-row" id="btnRow"></div>
+    `;
+    quizArea.innerHTML = "";
+    quizArea.appendChild(card);
+
+    const btnRow = card.querySelector("#btnRow");
+    if (wrongCount > 0) {
+      const retryBtn = document.createElement("button");
+      retryBtn.className = "btn btn-primary";
+      retryBtn.textContent = "틀린 문항 다시 풀기";
+      retryBtn.addEventListener("click", startRetry);
+      btnRow.appendChild(retryBtn);
+    }
+    const restartBtn = document.createElement("button");
+    restartBtn.className = "btn " + (wrongCount > 0 ? "btn-secondary" : "btn-primary");
+    restartBtn.textContent = "처음부터 다시 풀기";
+    restartBtn.addEventListener("click", restartAll);
+    btnRow.appendChild(restartBtn);
+  }
+
+  function startRetry(){
+    mode = "retry";
+    queue = Array.from(wrongSet);
+    qi = 0;
+    renderQuestion();
+  }
+
+  function restartAll(){
+    queue = QUESTIONS.map((_,i)=>i);
+    qi = 0;
+    score = 0;
+    wrongSet = new Set();
+    mode = "main";
+    renderQuestion();
+  }
+
+  // 시작
+  renderQuestion();
+})();
+</script>
+
+<div class="wrap">
+  <footer class="note">
+    본 형성평가는 오프라인에서도 동작하는 단일 HTML 파일입니다. 브라우저에서 파일을 더블클릭해 열면 바로 이용할 수 있습니다.
+  </footer>
+</div>
+</body>
+</html>
