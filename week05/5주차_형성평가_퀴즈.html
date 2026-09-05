@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5주차 형성평가 · 특허등록 절차와 특허검색</title>
+<style>
+  :root{
+    --navy:#16294D;
+    --navy-soft:#2E4470;
+    --paper:#F7F8FB;
+    --card:#FFFFFF;
+    --line:#E1E5EE;
+    --ink:#1B2130;
+    --ink-soft:#5B6478;
+    --teal:#1B8F6B;
+    --teal-soft:#E4F5EE;
+    --coral:#D4483A;
+    --coral-soft:#FBE9E6;
+    --gold:#C08A2E;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  .stage{
+    max-width:640px;
+    margin:0 auto;
+    min-height:100vh;
+    padding:clamp(14px,4vw,28px) clamp(14px,4vw,28px) 48px;
+  }
+
+  /* ---- Header ---- */
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    padding-top:6px;
+  }
+  .titleblock .eyebrow{
+    font-size:12.5px;
+    color:var(--navy-soft);
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .titleblock h1{
+    margin:4px 0 2px;
+    font-size:clamp(20px,5.4vw,26px);
+    line-height:1.28;
+    color:var(--navy);
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  .titleblock p{
+    margin:0;
+    font-size:13.5px;
+    color:var(--ink-soft);
+  }
+  .score-badge{
+    flex:0 0 auto;
+    background:var(--navy);
+    color:#fff;
+    border-radius:14px;
+    padding:9px 14px;
+    text-align:center;
+    min-width:76px;
+    box-shadow:0 3px 10px rgba(22,41,77,0.18);
+  }
+  .score-badge .num{
+    font-size:19px;
+    font-weight:800;
+    line-height:1;
+    display:block;
+    transition:transform 0.25s ease;
+  }
+  .score-badge .num.bump{
+    transform:scale(1.22);
+  }
+  .score-badge .lbl{
+    font-size:10px;
+    opacity:0.75;
+    margin-top:3px;
+    display:block;
+  }
+
+  /* ---- Progress bar ---- */
+  .progress-wrap{
+    margin-top:20px;
+  }
+  .progress-track{
+    height:8px;
+    border-radius:999px;
+    background:#E7EAF2;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--teal);
+    border-radius:999px;
+    transition:width 0.35s ease;
+  }
+  .progress-text{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .progress-text .badge-level{
+    font-weight:700;
+    padding:1px 8px;
+    border-radius:999px;
+    font-size:11px;
+  }
+  .lvl-하{background:var(--teal-soft); color:var(--teal);}
+  .lvl-중{background:#FFF3DE; color:var(--gold);}
+  .lvl-상{background:var(--coral-soft); color:var(--coral);}
+
+  /* ---- Card ---- */
+  .card{
+    margin-top:18px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:clamp(18px,5vw,26px);
+  }
+  .qtype{
+    display:inline-block;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--navy-soft);
+    background:#EEF1F8;
+    padding:3px 9px;
+    border-radius:999px;
+    margin-bottom:12px;
+  }
+  .qtext{
+    font-size:clamp(16px,4.6vw,18.5px);
+    font-weight:700;
+    line-height:1.5;
+    color:var(--ink);
+    margin:0 0 18px;
+    white-space:pre-line;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .option{
+    text-align:left;
+    width:100%;
+    border:1.5px solid var(--line);
+    background:#fff;
+    border-radius:12px;
+    padding:13px 14px;
+    font-size:15px;
+    color:var(--ink);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    line-height:1.45;
+    transition:border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  }
+  .option .tag{
+    flex:0 0 auto;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    border:1.5px solid var(--line);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ink-soft);
+  }
+  .option:hover:not(:disabled){
+    border-color:var(--navy-soft);
+    background:#F7F9FF;
+  }
+  .option:active:not(:disabled){
+    transform:scale(0.99);
+  }
+  .option:disabled{
+    cursor:default;
+  }
+  .option.correct{
+    border-color:var(--teal);
+    background:var(--teal-soft);
+  }
+  .option.correct .tag{
+    background:var(--teal);
+    border-color:var(--teal);
+    color:#fff;
+  }
+  .option.wrong{
+    border-color:var(--coral);
+    background:var(--coral-soft);
+  }
+  .option.wrong .tag{
+    background:var(--coral);
+    border-color:var(--coral);
+    color:#fff;
+  }
+  .option.dim{
+    opacity:0.55;
+  }
+
+  .feedback{
+    margin-top:16px;
+    border-radius:12px;
+    padding:14px 15px;
+    font-size:14px;
+    line-height:1.55;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.ok{ background:var(--teal-soft); color:#0F6B4E; }
+  .feedback.no{ background:var(--coral-soft); color:#A3352A; }
+  .feedback strong{ display:block; margin-bottom:3px; font-size:14.5px; }
+
+  .next-btn{
+    margin-top:18px;
+    width:100%;
+    border:none;
+    background:var(--navy);
+    color:#fff;
+    padding:14px;
+    border-radius:12px;
+    font-size:15.5px;
+    font-weight:700;
+    cursor:pointer;
+    display:none;
+  }
+  .next-btn.show{ display:block; }
+  .next-btn:active{ transform:scale(0.99); }
+
+  /* ---- Result screen ---- */
+  .result{
+    display:none;
+  }
+  .result.show{ display:block; }
+  .result-hero{
+    text-align:center;
+    padding:26px 10px 6px;
+  }
+  .result-hero .big-score{
+    font-size:46px;
+    font-weight:800;
+    color:var(--navy);
+    line-height:1;
+  }
+  .result-hero .out-of{
+    font-size:14px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .result-hero .msg{
+    margin-top:10px;
+    font-size:14.5px;
+    color:var(--ink-soft);
+  }
+  .review-list{
+    margin-top:20px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .review-item{
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .review-item.wrong{ border-color:#F1C6C0; background:#FFF9F8; }
+  .review-item.correct{ border-color:#BFE4D4; background:#F7FCFA; }
+  .review-item .rh{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:700;
+  }
+  .review-item .rh .mark{
+    width:20px; height:20px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:#fff; flex:0 0 auto;
+  }
+  .review-item.wrong .mark{ background:var(--coral); }
+  .review-item.correct .mark{ background:var(--teal); }
+  .review-item .rq{
+    margin:6px 0 4px;
+    font-size:14px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .review-item .ra{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+
+  .result-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:22px;
+  }
+  .btn{
+    border:none;
+    border-radius:12px;
+    padding:14px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    width:100%;
+  }
+  .btn.primary{ background:var(--coral); color:#fff; }
+  .btn.secondary{ background:#EEF1F8; color:var(--navy); }
+  .btn.ghost{ background:transparent; color:var(--ink-soft); border:1px solid var(--line); }
+  .btn:disabled{ opacity:0.4; cursor:default; }
+
+  .quiz-wrap{ display:block; }
+  .quiz-wrap.hide{ display:none; }
+
+  footer.note{
+    text-align:center;
+    font-size:11.5px;
+    color:#9AA2B4;
+    margin-top:26px;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <header class="top">
+    <div class="titleblock">
+      <span class="eyebrow">논문연구및특허 · 5주차</span>
+      <h1>특허등록 절차와 특허검색</h1>
+      <p>형성평가 퀴즈 · 총 10문항</p>
+    </div>
+    <div class="score-badge">
+      <span class="num" id="scoreNum">0</span>
+      <span class="lbl">POINT</span>
+    </div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text">
+      <span id="progressLabel">1 / 10</span>
+      <span class="badge-level" id="levelBadge">하</span>
+    </div>
+  </div>
+
+  <div class="quiz-wrap" id="quizWrap">
+    <div class="card">
+      <span class="qtype" id="qtype">객관식</span>
+      <p class="qtext" id="qtext"></p>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <strong id="fbHead"></strong>
+        <span id="fbBody"></span>
+      </div>
+      <button class="next-btn" id="nextBtn">다음 문항</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="card">
+      <div class="result-hero">
+        <div class="big-score" id="roundScore">0 / 10</div>
+        <div class="out-of">이번 라운드 정답 개수</div>
+        <div class="msg" id="resultMsg"></div>
+      </div>
+      <div class="review-list" id="reviewList"></div>
+      <div class="result-actions">
+        <button class="btn primary" id="retryWrongBtn">틀린 문항만 다시 풀기</button>
+        <button class="btn secondary" id="retryAllBtn">처음부터 10문항 다시 풀기</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="note">유한대학교 유한바이오제약학과 · 논문연구및특허 5주차 형성평가</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    level:"하", type:"객관식",
+    q:"논문에는 없고, 특허 문서에만 있는 특허 고유의 구성요소는?",
+    options:["Abstract","Introduction","청구범위 (Claims)","Result"],
+    correct:2,
+    explain:"청구범위(Claims)는 발명의 권리범위를 확정하는 특허만의 고유 구성요소입니다."
+  },
+  {
+    level:"하", type:"객관식",
+    q:"특허법 제29조가 정하는 특허 등록요건 3가지 관문에 해당하지 않는 것은?",
+    options:["신규성","진보성","산업상 이용가능성","창작성"],
+    correct:3,
+    explain:"등록요건은 신규성·진보성·산업상 이용가능성 3가지이며, 창작성은 특허법상 등록요건이 아닙니다."
+  },
+  {
+    level:"하", type:"괄호형",
+    q:"출원 전 이미 공개된 발명은 (　　　　)이 없어 특허를 받을 수 없다.",
+    options:["신규성","진보성","선출원주의","우선권"],
+    correct:0,
+    explain:"공지·공연실시되었거나 간행물·온라인에 공개된 발명은 신규성을 상실하여 특허를 받을 수 없습니다."
+  },
+  {
+    level:"중", type:"객관식",
+    q:"진보성 유무를 판단할 때 기준이 되는 사람은?",
+    options:["특허청 심사관","발명자 본인","통상의 지식을 가진 자 (통상의 기술자)","담당 변리사"],
+    correct:2,
+    explain:"진보성은 그 발명이 속한 기술분야에서 통상의 지식을 가진 사람을 기준으로 판단합니다."
+  },
+  {
+    level:"중", type:"객관식",
+    q:"동일한 발명에 대해 먼저 출원된 것이 있다면, 나중 출원은 특허를 받을 수 없다는 원칙의 이름은?",
+    options:["선발명주의","선출원주의","신규성 상실의 예외","우선권주장제도"],
+    correct:1,
+    explain:"우리나라는 선출원주의를 채택하고 있어, 동일 발명이면 먼저 출원한 사람만 특허를 받을 수 있습니다."
+  },
+  {
+    level:"중", type:"괄호형",
+    q:"발명자 스스로 공개한 경우에도, (　　)개월 이내에 출원하면 신규성을 인정받을 수 있다.",
+    options:["6개월","12개월","1년 2개월","24개월"],
+    correct:1,
+    explain:"특허법 제30조의 공지 예외(그레이스 피리어드)는 공개 후 12개월 이내 출원 시 신규성을 의제 적용합니다."
+  },
+  {
+    level:"상", type:"객관식",
+    q:"특허 출원 및 등록 절차의 순서로 옳은 것은?",
+    options:[
+      "상담 → 특허청 출원 → 선행기술조사 → 명세서·도면 작성 → 특허청 심사 → 등록완료",
+      "상담 → 선행기술조사 → 명세서·도면 작성 → 특허청 출원 → 특허청 심사 → 등록결정·등록료 납부 → 등록완료",
+      "선행기술조사 → 상담 → 특허청 심사 → 명세서·도면 작성 → 특허청 출원 → 등록완료",
+      "명세서·도면 작성 → 상담 → 선행기술조사 → 특허청 출원 → 등록완료 → 특허청 심사"
+    ],
+    correct:1,
+    explain:"상담 → 선행기술조사 → 명세서·도면 작성 → 특허청 출원 → 특허청 심사 → 등록결정·등록료 납부 → 등록완료 순입니다."
+  },
+  {
+    level:"중", type:"괄호형",
+    q:"임시특허명세서 제도는 (　　　　　　) 동안 정식 특허출원 여부를 진지하게 고민할 수 있는 검토 기간을 보장한다.",
+    options:["6개월","12개월","1년 2개월","2년"],
+    correct:2,
+    explain:"임시명세서로 출원일을 확보하면 1년 2개월 동안 정식 출원 여부를 검토할 수 있습니다."
+  },
+  {
+    level:"상", type:"객관식",
+    q:"다음 중 임시특허명세서 제도의 특징으로 옳지 않은 것은?",
+    options:[
+      "형식 제한 없이 자유롭게 제출 가능하다",
+      "청구범위(Claim)를 기재하지 않고 출원할 수 있다",
+      "반드시 별지 제15호 서식으로 제출해야 한다",
+      "논문·연구노트 등을 원본 그대로 제출할 수 있다"
+    ],
+    correct:2,
+    explain:"별지 제15호 서식은 '기존' 방식의 요건이며, 임시명세서는 서식 없이 원본 그대로 제출할 수 있습니다."
+  },
+  {
+    level:"상", type:"객관식",
+    q:"PCT(특허협력조약) 국제출원에 대한 설명으로 옳은 것은?",
+    options:[
+      "국내 출원의 우선일로부터 12개월 이내에 PCT 국제출원을 해야 한다",
+      "PCT 국제출원만 하면 모든 회원국에서 자동으로 특허가 등록된다",
+      "우선일로부터 30~31개월 이내에 PCT 국제출원을 해야 한다",
+      "PCT는 한 개 국가에서만 효력이 있는 제도이다"
+    ],
+    correct:0,
+    explain:"국내 출원 우선일로부터 12개월 이내 PCT 국제출원, 30~31개월 이내 국가별 국내단계 진입입니다."
+  }
+];
+
+let queue = QUESTIONS.map((_,i)=>i);   // 현재 라운드에서 풀 문항 인덱스 목록
+let pos = 0;                            // queue 내 현재 위치
+let roundCorrectIds = [];               // 이번 라운드에서 맞힌 id
+let roundWrongIds = [];                 // 이번 라운드에서 틀린 id
+let masteredSet = new Set();            // 지금까지 한 번이라도 맞힌 문항 (점수 산정용)
+let answeredThis = false;
+let lastRoundLog = [];                  // 결과화면 리뷰용 {id, chosen, correctFlag}
+
+const el = id => document.getElementById(id);
+
+function renderQuestion(){
+  answeredThis = false;
+  const qid = queue[pos];
+  const q = QUESTIONS[qid];
+
+  el('qtype').textContent = q.type;
+  el('qtext').textContent = q.q;
+  el('levelBadge').textContent = q.level;
+  el('levelBadge').className = 'badge-level lvl-' + q.level;
+  el('progressLabel').textContent = (pos+1) + ' / ' + queue.length;
+  el('progressFill').style.width = ((pos)/queue.length*100) + '%';
+
+  const optWrap = el('options');
+  optWrap.innerHTML = '';
+  const tagChars = ['①','②','③','④'];
+  q.options.forEach((optText, idx)=>{
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = '<span class="tag">'+tagChars[idx]+'</span><span>'+optText+'</span>';
+    btn.addEventListener('click', ()=> selectOption(qid, idx));
+    optWrap.appendChild(btn);
+  });
+
+  el('feedback').className = 'feedback';
+  el('nextBtn').className = 'next-btn';
+}
+
+function selectOption(qid, idx){
+  if(answeredThis) return;
+  answeredThis = true;
+  const q = QUESTIONS[qid];
+  const buttons = el('options').querySelectorAll('.option');
+  const isCorrect = idx === q.correct;
+
+  buttons.forEach((b, i)=>{
+    b.disabled = true;
+    if(i === q.correct) b.classList.add('correct');
+    if(i === idx && !isCorrect) b.classList.add('wrong');
+    if(i !== q.correct && i !== idx) b.classList.add('dim');
+  });
+
+  const fb = el('feedback');
+  fb.classList.add('show');
+  if(isCorrect){
+    fb.classList.add('ok'); fb.classList.remove('no');
+    el('fbHead').textContent = '정답입니다!';
+    if(!masteredSet.has(qid)){
+      masteredSet.add(qid);
+      bumpScore();
+    }
+    roundCorrectIds.push(qid);
+  }else{
+    fb.classList.add('no'); fb.classList.remove('ok');
+    el('fbHead').textContent = '아쉽지만 오답입니다.';
+    roundWrongIds.push(qid);
+  }
+  el('fbBody').textContent = q.explain;
+
+  lastRoundLog.push({qid, chosen: idx, isCorrect});
+
+  el('nextBtn').classList.add('show');
+  el('nextBtn').textContent = (pos === queue.length - 1) ? '결과 보기' : '다음 문항';
+}
+
+function bumpScore(){
+  const scoreEl = el('scoreNum');
+  scoreEl.textContent = masteredSet.size * 10;
+  scoreEl.classList.add('bump');
+  setTimeout(()=>scoreEl.classList.remove('bump'), 260);
+}
+
+el('nextBtn').addEventListener('click', ()=>{
+  if(pos < queue.length - 1){
+    pos++;
+    renderQuestion();
+  }else{
+    showResult();
+  }
+});
+
+function showResult(){
+  el('progressFill').style.width = '100%';
+  el('quizWrap').classList.add('hide');
+  el('result').classList.add('show');
+
+  el('roundScore').textContent = roundCorrectIds.length + ' / ' + queue.length;
+  const msgEl = el('resultMsg');
+  if(roundWrongIds.length === 0){
+    msgEl.textContent = '이번 라운드 전 문항 정답! 완벽합니다.';
+  }else{
+    msgEl.textContent = '틀린 문항 ' + roundWrongIds.length + '개를 다시 풀어 완전히 익혀보세요.';
+  }
+
+  const list = el('reviewList');
+  list.innerHTML = '';
+  lastRoundLog.forEach(entry=>{
+    const q = QUESTIONS[entry.qid];
+    const item = document.createElement('div');
+    item.className = 'review-item ' + (entry.isCorrect ? 'correct' : 'wrong');
+    item.innerHTML =
+      '<div class="rh"><span class="mark">'+(entry.isCorrect ? '✓' : '✕')+'</span>'+
+      (entry.isCorrect ? '정답' : '오답 · 정답은 "'+q.options[q.correct]+'"')+
+      '</div>'+
+      '<div class="rq">'+q.q+'</div>'+
+      '<div class="ra">'+q.explain+'</div>';
+    list.appendChild(item);
+  });
+
+  el('retryWrongBtn').disabled = roundWrongIds.length === 0;
+  el('retryWrongBtn').textContent = roundWrongIds.length === 0
+    ? '틀린 문항이 없습니다'
+    : '틀린 문항만 다시 풀기 (' + roundWrongIds.length + '문항)';
+}
+
+el('retryWrongBtn').addEventListener('click', ()=>{
+  if(roundWrongIds.length === 0) return;
+  startRound(roundWrongIds.slice());
+});
+
+el('retryAllBtn').addEventListener('click', ()=>{
+  startRound(QUESTIONS.map((_,i)=>i));
+});
+
+function startRound(idsArray){
+  queue = idsArray;
+  pos = 0;
+  roundCorrectIds = [];
+  roundWrongIds = [];
+  lastRoundLog = [];
+  el('result').classList.remove('show');
+  el('quizWrap').classList.remove('hide');
+  renderQuestion();
+}
+
+// 초기 시작
+renderQuestion();
+</script>
+</body>
+</html>
